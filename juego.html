@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:var(--font-sans);background:transparent;font-size:16px}
+.app{max-width:480px;margin:0 auto;padding:.8rem .9rem 2rem}
+.game-header{text-align:center;margin-bottom:1rem;padding:.8rem 1rem;background:#EAF3DE;border-radius:var(--border-radius-lg);border:2px solid #C0DD97}
+.game-title{font-size:20px;font-weight:500;color:#3B6D11}
+.game-sub{font-size:13px;color:#639922;margin-top:3px}
+/* MENU CARDS */
+.menu-card{border-radius:var(--border-radius-lg);padding:14px 12px;cursor:pointer;border:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:12px;background:var(--color-background-secondary)}
+.menu-card:active{transform:scale(.96)}
+.menu-card .mc-icon{font-size:34px;line-height:1;flex-shrink:0}
+.menu-card .mc-text{display:flex;flex-direction:column;gap:2px}
+.menu-card .mc-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.menu-card .mc-sub{font-size:11px;color:var(--color-text-secondary)}
+.menu-card.active{border-width:3px}
+.menu-card.m1{border-color:transparent}.menu-card.m1.active{border-color:#378ADD;background:#E6F1FB}
+.menu-card.m1.active .mc-title{color:#185FA5}
+.menu-card.m2{border-color:transparent}.menu-card.m2.active{border-color:#1D9E75;background:#E1F5EE}
+.menu-card.m2.active .mc-title{color:#0F6E56}
+.menu-card.m3{border-color:transparent}.menu-card.m3.active{border-color:#D85A30;background:#FAECE7}
+.menu-card.m3.active .mc-title{color:#993C1D}
+.menu-card.m4{border-color:transparent}.menu-card.m4.active{border-color:#7F77DD;background:#EEEDFE}
+.menu-card.m4.active .mc-title{color:#3C3489}
+.menu-card.m5{border-color:transparent}.menu-card.m5.active{border-color:#EF9F27;background:#FAEEDA}
+.menu-card.m5.active .mc-title{color:#633806}
+.menu-card.m6{border-color:transparent}.menu-card.m6.active{border-color:#0F6E56;background:#E1F5EE}
+.menu-card.m6.active .mc-title{color:#085041}
+.menu-card.m7{border-color:transparent}.menu-card.m7.active{border-color:#D85A30;background:#FAECE7}
+.menu-card.m7.active .mc-title{color:#4A1B0C}
+.prog-wrap{margin-bottom:1rem}
+.prog-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.round-info{font-size:13px;font-weight:500;color:var(--color-text-secondary)}
+.score-badge{font-size:13px;font-weight:500;padding:5px 13px;border-radius:20px}
+.s1 .score-badge{background:#E6F1FB;color:#185FA5}
+.s2 .score-badge{background:#E1F5EE;color:#0F6E56}
+.s3 .score-badge{background:#FAECE7;color:#993C1D}
+.s4 .score-badge{background:#EEEDFE;color:#3C3489}
+.s5 .score-badge{background:#FAEEDA;color:#633806}
+.s6 .score-badge{background:#E1F5EE;color:#085041}
+.s7 .score-badge{background:#FAECE7;color:#4A1B0C}
+.progress-bar{height:10px;background:var(--color-background-secondary);border-radius:5px;overflow:hidden}
+.s1 .progress-fill{background:#378ADD}.s2 .progress-fill{background:#1D9E75}
+.s3 .progress-fill{background:#D85A30}.s4 .progress-fill{background:#7F77DD}
+.s5 .progress-fill{background:#EF9F27}.s6 .progress-fill{background:#0F6E56}
+.s7 .progress-fill{background:#D85A30}
+.progress-fill{height:100%;border-radius:5px;transition:width .4s}
+.num-card{border-radius:var(--border-radius-lg);padding:1rem;text-align:center;margin-bottom:1rem;border:2px solid}
+.s1 .num-card{background:#E6F1FB;border-color:#B5D4F4}
+.s2 .num-card{background:#E1F5EE;border-color:#9FE1CB}
+.s3 .num-card{background:#FAECE7;border-color:#F5C4B3}
+.s4 .num-card{background:#EEEDFE;border-color:#CECBF6}
+.s5 .num-card{background:#FAEEDA;border-color:#FAC775}
+.s6 .num-card{background:#E1F5EE;border-color:#9FE1CB}
+.s7 .num-card{background:#FAECE7;border-color:#F5C4B3}
+.big-num{font-size:70px;font-weight:500;line-height:1;letter-spacing:-2px}
+.s1 .big-num{color:#185FA5}.s2 .big-num{color:#0F6E56}.s3 .big-num{color:#993C1D}
+.s4 .big-num{color:#3C3489}.s5 .big-num{color:#633806}.s6 .big-num{color:#0F6E56}
+.card-sub{font-size:13px;margin-top:6px;font-weight:500}
+.s1 .card-sub{color:#378ADD}.s2 .card-sub{color:#1D9E75}.s3 .card-sub{color:#D85A30}
+.s4 .card-sub{color:#7F77DD}.s5 .card-sub{color:#BA7517}.s6 .card-sub{color:#1D9E75}
+.feedback{padding:13px 16px;border-radius:var(--border-radius-lg);font-size:15px;font-weight:500;text-align:center;margin-bottom:1rem;animation:popIn .25s ease;line-height:1.4}
+@keyframes popIn{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.feedback.ok{background:#EAF3DE;color:#3B6D11;border:2px solid #C0DD97}
+.feedback.err{background:#FCEBEB;color:#A32D2D;border:2px solid #F7C1C1}
+.action-btn{display:block;width:100%;padding:16px;font-size:17px;font-weight:500;cursor:pointer;border-radius:var(--border-radius-lg);border:none;color:#fff;transition:all .15s;margin-top:4px}
+.action-btn:active{transform:scale(.97)}
+.s1 .action-btn{background:#378ADD}.s2 .action-btn{background:#1D9E75}
+.s3 .action-btn{background:#D85A30}.s4 .action-btn{background:#7F77DD}
+.s5 .action-btn{background:#EF9F27}.s6 .action-btn{background:#0F6E56}
+.s7 .action-btn{background:#D85A30}
+.ghost-btn{display:block;width:100%;padding:14px;font-size:15px;font-weight:500;cursor:pointer;border-radius:var(--border-radius-lg);border:2px solid var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);transition:all .15s;margin-top:8px}
+/* P1 inputs */
+.inputs-row{display:flex;gap:5px;justify-content:center;margin-bottom:1rem;align-items:flex-end}
+.place-group{display:flex;flex-direction:column;align-items:center;gap:5px}
+.place-group label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.3px;text-align:center}
+.place-group.pm label{color:#534AB7}.place-group.pc label{color:#185FA5}
+.place-group.pd label{color:#0F6E56}.place-group.pu label{color:#993C1D}
+.place-group input{width:66px;height:66px;font-size:28px;text-align:center;font-weight:500;border-radius:var(--border-radius-lg);outline:none;color:var(--color-text-primary);background:var(--color-background-primary);-moz-appearance:textfield;border:2px solid}
+.place-group input::-webkit-outer-spin-button,.place-group input::-webkit-inner-spin-button{-webkit-appearance:none}
+.place-group.pm input{border-color:#7F77DD}.place-group.pm input:focus{box-shadow:0 0 0 3px rgba(127,119,221,.2)}
+.place-group.pc input{border-color:#378ADD}.place-group.pc input:focus{box-shadow:0 0 0 3px rgba(55,138,221,.2)}
+.place-group.pd input{border-color:#1D9E75}.place-group.pd input:focus{box-shadow:0 0 0 3px rgba(29,158,117,.2)}
+.place-group.pu input{border-color:#D85A30}.place-group.pu input:focus{box-shadow:0 0 0 3px rgba(216,90,48,.2)}
+.place-group input:disabled{opacity:.75}
+.sep{font-size:24px;color:var(--color-border-secondary);padding-bottom:14px;font-weight:500}
+.blocks-vis{display:flex;gap:10px;justify-content:center;align-items:flex-end;margin-bottom:1rem;min-height:52px;flex-wrap:wrap}
+.bgroup{display:flex;flex-direction:column;align-items:center;gap:4px}
+.bgroup-label{font-size:11px;font-weight:500;color:var(--color-text-secondary)}
+.binner{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;max-width:120px}
+.blk-m{width:28px;height:28px;background:#7F77DD;border-radius:3px}
+.blk-h{width:24px;height:24px;background:#378ADD;border-radius:3px}
+.blk-d{width:8px;height:24px;background:#1D9E75;border-radius:2px}
+.blk-u{width:9px;height:9px;background:#D85A30;border-radius:2px}
+/* P2 */
+.cmp-nums-row{display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:1rem}
+.cmp-box{width:120px;height:90px;display:flex;align-items:center;justify-content:center;border-radius:var(--border-radius-lg);border:2px solid var(--color-border-tertiary);background:var(--color-background-secondary);font-size:36px;font-weight:500;color:var(--color-text-primary);letter-spacing:-1px;transition:all .3s}
+.cmp-box.bigger{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56}
+.cmp-box.smaller{border-color:#D85A30;background:#FAECE7;color:#993C1D}
+.cmp-box.equal-win{border-color:#378ADD;background:#E6F1FB;color:#185FA5}
+.sym-area{width:40px;text-align:center;font-size:28px;font-weight:500;color:var(--color-text-primary)}
+.hint-row{display:flex;gap:4px;justify-content:center;margin-bottom:1rem;flex-wrap:wrap}
+.digit-pill{font-size:11px;padding:4px 8px;border-radius:20px;font-weight:500}
+.dp-m{background:#EEEDFE;color:#534AB7}.dp-c{background:#E6F1FB;color:#185FA5}
+.dp-d{background:#E1F5EE;color:#0F6E56}.dp-u{background:#FAECE7;color:#993C1D}
+.btns-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1rem}
+.cmp-btn{padding:16px 8px;font-size:24px;font-weight:500;cursor:pointer;border-radius:var(--border-radius-lg);border:2px solid var(--color-border-secondary);background:var(--color-background-primary);color:var(--color-text-primary);transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+.cmp-btn span.lbl{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.4px}
+.cmp-btn:active:not(:disabled){transform:scale(.93)}
+.cmp-btn:disabled{opacity:.45;cursor:default}
+.cmp-btn.correct{background:#EAF3DE;border-color:#1D9E75;color:#3B6D11}
+.cmp-btn.correct .lbl{color:#3B6D11}
+.cmp-btn.wrong{background:#FCEBEB;border-color:#E24B4A;color:#A32D2D}
+.cmp-btn.wrong .lbl{color:#A32D2D}
+/* P3 */
+.p3-exercise{background:var(--color-background-secondary);border-radius:var(--border-radius-lg);border:2px solid var(--color-border-tertiary);padding:1rem;margin-bottom:1rem}
+.dir-badge{font-size:13px;font-weight:500;padding:6px 14px;border-radius:20px;display:inline-block;margin-bottom:.8rem}
+.dir-badge.asc{background:#E1F5EE;color:#0F6E56;border:1.5px solid #5DCAA5}
+.dir-badge.desc{background:#FAECE7;color:#993C1D;border:1.5px solid #F0997B}
+.p3-given{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:1rem}
+.p3-chip{background:var(--color-background-primary);border:2px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:7px 12px;font-size:19px;font-weight:500;color:var(--color-text-primary)}
+.p3-slots{display:flex;flex-direction:column;gap:9px}
+.p3-slot-row{display:flex;align-items:center;gap:10px}
+.p3-pos{width:24px;text-align:right;font-size:14px;color:var(--color-text-secondary);font-weight:500;flex-shrink:0}
+.p3-input{width:120px;height:54px;font-size:24px;text-align:center;font-weight:500;border-radius:var(--border-radius-md);border:2px solid var(--color-border-secondary);outline:none;color:var(--color-text-primary);background:var(--color-background-primary);transition:border-color .2s}
+.p3-input:focus{border-color:#D85A30;box-shadow:0 0 0 3px rgba(216,90,48,.15)}
+.p3-input.ok{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56}
+.p3-input.err{border-color:#E24B4A;background:#FCEBEB;color:#A32D2D}
+.p3-input:disabled{opacity:.85}
+.p3-tick{font-size:20px;width:26px}
+.p3-arrow{font-size:18px;color:var(--color-text-secondary)}
+/* P4 */
+.p4-input-big{width:160px;height:90px;font-size:46px;text-align:center;font-weight:500;border-radius:var(--border-radius-lg);border:3px solid #7F77DD;outline:none;color:#3C3489;background:#EEEDFE;transition:all .2s;-moz-appearance:textfield;display:block;margin:0 auto}
+.p4-input-big::-webkit-outer-spin-button,.p4-input-big::-webkit-inner-spin-button{-webkit-appearance:none}
+/* P5 */
+.p5-textarea{width:100%;display:block;min-height:130px;font-size:20px;font-weight:500;padding:16px;border-radius:var(--border-radius-lg);border:3px solid #EF9F27;outline:none;color:#411402;background:#FAEEDA;resize:none;line-height:1.6;font-family:var(--font-sans);transition:border-color .2s}
+.p5-textarea:focus{border-color:#BA7517;box-shadow:0 0 0 3px rgba(239,159,39,.2)}
+.p5-textarea:disabled{opacity:.85}
+.p5-textarea.ok{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56}
+.p5-textarea.err{border-color:#E24B4A;background:#FCEBEB;color:#A32D2D}
+.p5-answer-reveal{margin-top:8px;padding:12px 14px;border-radius:var(--border-radius-md);background:#FAEEDA;border:2px solid #FAC775;font-size:15px;color:#633806;font-weight:500}
+/* P6 */
+.fig-groups{display:flex;gap:6px;justify-content:center;margin-bottom:1.2rem;flex-wrap:wrap}
+.fig-group{flex:1;min-width:60px;max-width:100px;border-radius:var(--border-radius-lg);padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid}
+.fig-group.fg-m{border-color:#7F77DD;background:#EEEDFE}
+.fig-group.fg-c{border-color:#378ADD;background:#E6F1FB}
+.fig-group.fg-d{border-color:#1D9E75;background:#E1F5EE}
+.fig-group.fg-u{border-color:#D85A30;background:#FAECE7}
+.fig-group-label{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.3px;text-align:center}
+.fg-m .fig-group-label{color:#534AB7}.fg-c .fig-group-label{color:#185FA5}
+.fg-d .fig-group-label{color:#0F6E56}.fg-u .fig-group-label{color:#993C1D}
+.fig-blocks{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;min-height:28px;align-items:flex-end}
+.fb-m{width:24px;height:24px;background:#7F77DD;border-radius:3px}
+.fb-h{width:20px;height:20px;background:#378ADD;border-radius:3px}
+.fb-d{width:7px;height:20px;background:#1D9E75;border-radius:2px}
+.fb-u{width:8px;height:8px;background:#D85A30;border-radius:2px}
+.p6-input{width:160px;height:90px;font-size:46px;text-align:center;font-weight:500;border-radius:var(--border-radius-lg);border:3px solid #0F6E56;outline:none;color:#085041;background:#E1F5EE;transition:all .2s;-moz-appearance:textfield;display:block;margin:0 auto}
+.p6-input::-webkit-outer-spin-button,.p6-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.p6-input.ok{border-color:#1D9E75;background:#E1F5EE;color:#085041}
+.p6-input.err{border-color:#E24B4A;background:#FCEBEB;color:#A32D2D}
+/* P7 — Posición y valor */
+.p7-number-display{display:flex;align-items:flex-end;justify-content:center;gap:2px;margin-bottom:.5rem}
+.p7-digit{width:62px;height:80px;display:flex;align-items:center;justify-content:center;font-size:52px;font-weight:500;border-radius:var(--border-radius-lg);border:2px solid var(--color-border-tertiary);background:var(--color-background-primary);color:var(--color-text-primary);position:relative;transition:all .2s}
+.p7-digit.highlighted{background:#FAECE7;border-color:#D85A30;color:#993C1D}
+.p7-arrow-row{display:flex;justify-content:center;gap:2px;margin-bottom:1.2rem}
+.p7-arrow-cell{width:62px;display:flex;justify-content:center;font-size:22px}
+.p7-circles{display:flex;gap:10px;justify-content:center;margin-bottom:1.2rem}
+.p7-circle{width:64px;height:64px;border-radius:50%;border:3px solid;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-direction:column;gap:1px}
+.p7-circle.c-m{border-color:#7F77DD;color:#534AB7;background:#EEEDFE}
+.p7-circle.c-c{border-color:#378ADD;color:#185FA5;background:#E6F1FB}
+.p7-circle.c-d{border-color:#1D9E75;color:#0F6E56;background:#E1F5EE}
+.p7-circle.c-u{border-color:#D85A30;color:#993C1D;background:#FAECE7}
+.p7-circle.selected{transform:scale(1.12);box-shadow:0 0 0 3px rgba(0,0,0,.1)}
+.p7-circle.c-m.selected{background:#7F77DD;color:#fff}
+.p7-circle.c-c.selected{background:#378ADD;color:#fff}
+.p7-circle.c-d.selected{background:#1D9E75;color:#fff}
+.p7-circle.c-u.selected{background:#D85A30;color:#fff}
+.p7-circle.correct{background:#1D9E75!important;border-color:#1D9E75!important;color:#fff!important}
+.p7-circle.wrong{background:#E24B4A!important;border-color:#E24B4A!important;color:#fff!important}
+.p7-circle:disabled,.p7-circle[disabled]{cursor:default;transform:none}
+.p7-val-row{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:1rem}
+.p7-val-label{font-size:13px;font-weight:500;color:var(--color-text-secondary)}
+.p7-val-input{width:160px;height:80px;font-size:44px;text-align:center;font-weight:500;border-radius:var(--border-radius-lg);border:3px solid #D85A30;outline:none;color:#993C1D;background:#FAECE7;transition:all .2s}
+.p7-val-input:focus{border-color:#993C1D;box-shadow:0 0 0 3px rgba(216,90,48,.2)}
+.p7-val-input.ok{border-color:#1D9E75;background:#E1F5EE;color:#0F6E56}
+.p7-val-input.err{border-color:#E24B4A;background:#FCEBEB;color:#A32D2D}
+.p7-val-input:disabled{opacity:.85}
+/* Result */
+.result-screen{text-align:center;padding:.5rem 0}
+.result-stars{display:flex;justify-content:center;gap:8px;margin-bottom:.8rem}
+.result-num{font-size:60px;font-weight:500;line-height:1}
+.result-label{font-size:16px;margin:8px 0 1.4rem;font-weight:500;line-height:1.4}
+.result-emoji{font-size:52px;margin-bottom:.5rem}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="game-header">
+    <div class="game-title">🌟 Mundo de los Números 🌟</div>
+    <div class="game-sub">¡Aprende jugando! Tú puedes lograrlo 💪</div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:1rem" id="menu-grid"></div>
+
+  <div class="s1" id="panel1">
+    <div class="prog-wrap"><div class="prog-label"><div class="round-info" id="p1-rinfo">Pregunta 1 de 10</div><div class="score-badge" id="p1-score">⭐ 0 puntos</div></div><div class="progress-bar"><div class="progress-fill" id="p1-pfill" style="width:10%"></div></div></div>
+    <div id="p1-content"></div>
+  </div>
+  <div class="s2" id="panel2">
+    <div class="prog-wrap"><div class="prog-label"><div class="round-info" id="p2-rinfo">Pregunta 1 de 12</div><div class="score-badge" id="p2-score">⭐ 0 puntos</div></div><div class="progress-bar"><div class="progress-fill" id="p2-pfill" style="width:8.3%"></div></div></div>
+    <div id="p2-content"></div>
+  </div>
+  <div class="s3" id="panel3">
+    <div class="prog-wrap"><div class="prog-label"><div class="round-info" id="p3-rinfo">Ejercicio 1 de 6</div><div class="score-badge" id="p3-score">⭐ 0 puntos</div></div><div class="progress-bar"><div class="progress-fill" id="p3-pfill" style="width:16.6%"></div></div></div>
+    <div id="p3-content"></div>
+  </div>
+  <div class="s4" id="panel4">
+    <div class="prog-wrap"><div class="prog-label"><div class="round-info" id="p4-rinfo">Pregunta 1 de 12</div><div class="score-badge" id="p4-score">⭐ 0 puntos</div></div><div class="progress-bar"><div class="progress-fill" id="p4-pfill" style="width:8.3%"></div></div></div>
+    <div id="p4-content"></div>
+  </div>
+  <div class="s5" id="panel5">
+    <div class="prog-wrap"><div class="prog-label"><div class="round-info" id="p5-rinfo">Pregunta 1 de 12</div><div class="score-badge" id="p5-score">⭐ 0 puntos</div></div><div class="progress-bar"><div class="progress-fill" id="p5-pfill" style="width:8.3%"></div></div></div>
+    <div id="p5-content"></div>
+  </div>
+  <div class="s6" id="panel6">
+    <div class="prog-wrap"><div class="prog-label"><div class="round-info" id="p6-rinfo">Pregunta 1 de 10</div><div class="score-badge" id="p6-score">⭐ 0 puntos</div></div><div class="progress-bar"><div class="progress-fill" id="p6-pfill" style="width:10%"></div></div></div>
+    <div id="p6-content"></div>
+  </div>
+  <div class="s7" id="panel7">
+    <div class="prog-wrap"><div class="prog-label"><div class="round-info" id="p7-rinfo">Pregunta 1 de 12</div><div class="score-badge" id="p7-score">⭐ 0 puntos</div></div><div class="progress-bar"><div class="progress-fill" id="p7-pfill" style="width:8.3%"></div></div></div>
+    <div id="p7-content"></div>
+  </div>
+</div>
+
+<script>
+/* ── UTILS ── */
+function mhdu(n){return{m:Math.floor(n/1000),h:Math.floor((n%1000)/100),d:Math.floor((n%100)/10),u:n%10}}
+const MENU=[
+  {n:1,icon:'🧩',title:'Valor posicional',sub:'Miles · Cent · Dec · Uni'},
+  {n:2,icon:'⚖️',title:'Comparar números',sub:'Mayor, menor o igual'},
+  {n:3,icon:'📊',title:'Ordenar números',sub:'De menor a mayor y más'},
+  {n:4,icon:'📝',title:'Palabras → número',sub:'Lee y escribe la cifra'},
+  {n:5,icon:'✍️',title:'Número → palabras',sub:'Escribe con letras'},
+  {n:6,icon:'🔷',title:'Figuras → número',sub:'Cuenta los bloques'},
+  {n:7,icon:'🎯',title:'Posición y valor',sub:'¿Dónde está el dígito?'},
+];
+
+function renderMenu(active){
+  document.getElementById('menu-grid').innerHTML=MENU.map(m=>`
+    <div class="menu-card m${m.n}${active===m.n?' active':''}" onclick="switchTab(${m.n})">
+      <div class="mc-icon">${m.icon}</div>
+      <div class="mc-text">
+        <div class="mc-title">${m.title}</div>
+        <div class="mc-sub">${m.sub}</div>
+      </div>
+    </div>`).join('');
+}
+
+function switchTab(n){
+  [1,2,3,4,5,6,7].forEach(i=>{
+    const p=document.getElementById('panel'+i);
+    if(p) p.style.display=i===n?'block':'none';
+  });
+  renderMenu(n);
+}
+function starSVG(f){const c=f?'#EF9F27':'var(--color-border-secondary)',sc=f?'#BA7517':'var(--color-border-secondary)';return`<svg viewBox="0 0 24 24" width="52" height="52"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="${c}" stroke="${sc}" stroke-width="1"/></svg>`}
+
+/* ── numToWords ── */
+const UNI=['','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez','once','doce','trece','catorce','quince','dieciséis','diecisiete','dieciocho','diecinueve','veinte','veintiuno','veintidós','veintitrés','veinticuatro','veinticinco','veintiséis','veintisiete','veintiocho','veintinueve'];
+const DEC=['','','veinte','treinta','cuarenta','cincuenta','sesenta','setenta','ochenta','noventa'];
+const CEN=['','ciento','doscientos','trescientos','cuatrocientos','quinientos','seiscientos','setecientos','ochocientos','novecientos'];
+const MIL_PRE=['','','dos','tres','cuatro','cinco','seis','siete','ocho','nueve'];
+function b100(n){if(!n)return'';if(n<=29)return UNI[n];const d=Math.floor(n/10),u=n%10;return DEC[d]+(u?' y '+UNI[u]:'');}
+function b1000(n){if(!n)return'';if(n===100)return'cien';const c=Math.floor(n/100),r=n%100;return[c?CEN[c]:'',r?b100(r):''].filter(Boolean).join(' ');}
+function numToWords(n){if(!n)return'cero';if(n===1000)return'mil';const th=Math.floor(n/1000),r=n%1000;const parts=[];if(th===1)parts.push('mil');else if(th>1)parts.push(MIL_PRE[th]+' mil');if(r)parts.push(b1000(r));return parts.join(' ');}
+function normalize(s){return s.trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/\s+/g,' ');}
+
+/* ══ P1 ══ */
+const P1={ROUNDS:10,round:1,score:0,nums:[]};
+const OKS=['¡Correcto! ¡Eres increíble! 🎉','¡Muy bien! Lo lograste 🌟','¡Excelente! ¡Sigue así! 🏆','¡Perfecto! 🚀'];
+function p1GenNums(){const pool=[];for(let i=0;i<5;i++)pool.push(1000*(Math.floor(Math.random()*9)+1)+100*Math.floor(Math.random()*10)+10*Math.floor(Math.random()*10)+Math.floor(Math.random()*10));for(let i=0;i<3;i++)pool.push(100*(Math.floor(Math.random()*9)+1)+10*Math.floor(Math.random()*10)+Math.floor(Math.random()*10));pool.push(10*(Math.floor(Math.random()*9)+1)+Math.floor(Math.random()*10));pool.push([1050,2300,3012,4500,6080,7200,8910,1430,5670,9009][Math.floor(Math.random()*10)]);return pool.sort(()=>Math.random()-.5).slice(0,P1.ROUNDS);}
+function p1Render(){const n=P1.nums[P1.round-1];document.getElementById('p1-rinfo').textContent=`Pregunta ${P1.round} de ${P1.ROUNDS}`;document.getElementById('p1-pfill').style.width=`${(P1.round/P1.ROUNDS)*100}%`;document.getElementById('p1-score').textContent=`⭐ ${P1.score} puntos`;document.getElementById('p1-content').innerHTML=`<div class="num-card"><div class="big-num">${n}</div><div class="card-sub">🔢 ¿Cuántos miles, centenas, decenas y unidades tiene?</div></div><div class="inputs-row"><div class="place-group pm"><label>🟣 Miles</label><input type="number" id="p1-im" min="0" max="9" placeholder="?" oninput="p1Cap(this)" onkeydown="p1Key(event)"></div><div class="sep">·</div><div class="place-group pc"><label>🔵 Cent.</label><input type="number" id="p1-ic" min="0" max="9" placeholder="?" oninput="p1Cap(this)" onkeydown="p1Key(event)"></div><div class="sep">·</div><div class="place-group pd"><label>🟢 Dec.</label><input type="number" id="p1-id" min="0" max="9" placeholder="?" oninput="p1Cap(this)" onkeydown="p1Key(event)"></div><div class="sep">·</div><div class="place-group pu"><label>🟠 Uni.</label><input type="number" id="p1-iu" min="0" max="9" placeholder="?" oninput="p1Cap(this)" onkeydown="p1Key(event)"></div></div><div id="p1-fba"></div><div id="p1-bva"></div><button class="action-btn" id="p1-abtn" onclick="p1Check()">Comprobar ✅</button>`;setTimeout(()=>{const e=document.getElementById('p1-im');if(e)e.focus();},80);}
+function p1Cap(inp){let v=inp.value.replace(/[^0-9]/g,'');if(v.length>1)v=v[v.length-1];inp.value=v;}
+function p1Key(e){if(e.key==='Enter'){const b=document.getElementById('p1-abtn');b&&b.onclick();}}
+function p1Check(){const n=P1.nums[P1.round-1];const{m,h,d,u}=mhdu(n);const um=parseInt(document.getElementById('p1-im').value)||0,uh=parseInt(document.getElementById('p1-ic').value)||0,ud=parseInt(document.getElementById('p1-id').value)||0,uu=parseInt(document.getElementById('p1-iu').value)||0;const ok=um===m&&uh===h&&ud===d&&uu===u;if(ok)P1.score++;document.getElementById('p1-score').textContent=`⭐ ${P1.score} puntos`;document.getElementById('p1-fba').innerHTML=`<div class="feedback ${ok?'ok':'err'}">${ok?OKS[Math.floor(Math.random()*OKS.length)]:`La respuesta era: ${m} miles, ${h} centenas, ${d} decenas y ${u} unidades 😊`}</div>`;p1Blocks(m,h,d,u);[['p1-im',m],['p1-ic',h],['p1-id',d],['p1-iu',u]].forEach(([id,v])=>{const e=document.getElementById(id);if(e){e.disabled=true;e.value=v;}});const btn=document.getElementById('p1-abtn');btn.textContent=P1.round<P1.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';btn.onclick=p1Next;}
+function p1Blocks(m,h,d,u){let html='<div class="blocks-vis">';if(m>0){let bs='';for(let i=0;i<m;i++)bs+=`<div class="blk-m"></div>`;html+=`<div class="bgroup"><div class="binner">${bs}</div><div class="bgroup-label">🟣 ${m} mil${m>1?'es':''}</div></div>`;}if(h>0){let bs='';for(let i=0;i<h;i++)bs+=`<div class="blk-h"></div>`;html+=`<div class="bgroup"><div class="binner">${bs}</div><div class="bgroup-label">🔵 ${h} cent.</div></div>`;}if(d>0){let bs='';for(let i=0;i<d;i++)bs+=`<div class="blk-d"></div>`;html+=`<div class="bgroup"><div class="binner">${bs}</div><div class="bgroup-label">🟢 ${d} dec.</div></div>`;}if(u>0){let bs='';for(let i=0;i<u;i++)bs+=`<div class="blk-u"></div>`;html+=`<div class="bgroup"><div class="binner">${bs}</div><div class="bgroup-label">🟠 ${u} uni.</div></div>`;}html+='</div>';document.getElementById('p1-bva').innerHTML=html;}
+function p1Next(){if(P1.round>=P1.ROUNDS){p1Result();return;}P1.round++;p1Render();}
+function p1Result(){document.getElementById('p1-pfill').style.width='100%';const pct=P1.score/P1.ROUNDS,s=pct>=.9?3:pct>=.6?2:1;const e=['😊','😄','🥳'],m=['¡Sigue practicando!','¡Muy bien! Estás aprendiendo genial.','¡Eres un CAMPEÓN de los números!'];document.getElementById('p1-content').innerHTML=`<div class="result-screen"><div class="result-emoji">${e[s-1]}</div><div class="result-stars">${[0,1,2].map(i=>starSVG(i<s)).join('')}</div><div class="result-num" style="color:#185FA5">${P1.score}/${P1.ROUNDS}</div><div class="result-label" style="color:#378ADD">${m[s-1]}</div><button class="action-btn" style="margin-bottom:10px" onclick="p1Restart()">🔄 Jugar de nuevo</button><button class="ghost-btn" onclick="switchTab(2)">Ir a Parte 2 ➡️</button></div>`;}
+function p1Restart(){P1.round=1;P1.score=0;P1.nums=p1GenNums();p1Render();}
+
+/* ══ P2 ══ */
+const P2={ROUNDS:12,round:1,score:0,pairs:[]};
+function p2GenPairs(){const t=[[1987,1978],[2762,2726],[1543,1534],[3891,3819],[4562,4652],[5213,5231],[6200,6020],[7350,7530],[1800,1080],[9990,9909],[8470,8740],[3640,3460],[5010,5100],[2990,2890],[4030,4300],[7770,7070],[1550,1505],[6620,6260],[1000,100],[9000,900],[3500,3050],[4710,4170],[2580,2850],[6390,6930],[5000,5000],[2500,2050],[1001,1010],[8008,8080],[7654,7645],[3210,3120]];return t.sort(()=>Math.random()-.5).slice(0,P2.ROUNDS).map(p=>Math.random()<.5?p:[p[1],p[0]]);}
+function p2Render(){const[a,b]=P2.pairs[P2.round-1];document.getElementById('p2-rinfo').textContent=`Pregunta ${P2.round} de ${P2.ROUNDS}`;document.getElementById('p2-pfill').style.width=`${(P2.round/P2.ROUNDS)*100}%`;document.getElementById('p2-score').textContent=`⭐ ${P2.score} puntos`;const ma=mhdu(a),mb=mhdu(b);document.getElementById('p2-content').innerHTML=`<div style="text-align:center;font-size:15px;font-weight:500;color:var(--color-text-secondary);margin-bottom:1rem">⚖️ ¿Qué símbolo va en el medio?</div><div class="cmp-nums-row"><div class="cmp-box" id="p2-boxa">${a}</div><div class="sym-area" id="p2-sym">?</div><div class="cmp-box" id="p2-boxb">${b}</div></div><div class="hint-row"><span class="digit-pill dp-m">🟣 M: ${ma.m}–${mb.m}</span><span class="digit-pill dp-c">🔵 C: ${ma.h}–${mb.h}</span><span class="digit-pill dp-d">🟢 D: ${ma.d}–${mb.d}</span><span class="digit-pill dp-u">🟠 U: ${ma.u}–${mb.u}</span></div><div class="btns-row"><button class="cmp-btn" id="p2-gt" onclick="p2Check('>')"><span>&gt;</span><span class="lbl">Mayor</span></button><button class="cmp-btn" id="p2-eq" onclick="p2Check('=')"><span>=</span><span class="lbl">Igual</span></button><button class="cmp-btn" id="p2-lt" onclick="p2Check('<')"><span>&lt;</span><span class="lbl">Menor</span></button></div><div id="p2-fba"></div><button class="action-btn" id="p2-nbtn" style="display:none" onclick="p2Next()"></button>`;}
+function p2Check(ans){const[a,b]=P2.pairs[P2.round-1];const correct=a>b?'>':a<b?'<':'=';const ok=ans===correct;if(ok)P2.score++;document.getElementById('p2-score').textContent=`⭐ ${P2.score} puntos`;document.getElementById('p2-sym').textContent=correct;['p2-gt','p2-eq','p2-lt'].forEach(id=>{const e=document.getElementById(id);if(e)e.disabled=true;});const map={'>':'p2-gt','=':'p2-eq','<':'p2-lt'};document.getElementById(map[ans]).classList.add(ok?'correct':'wrong');if(!ok)document.getElementById(map[correct]).classList.add('correct');const ba=document.getElementById('p2-boxa'),bb=document.getElementById('p2-boxb');if(correct==='>'){ba.classList.add('bigger');bb.classList.add('smaller');}else if(correct==='<'){ba.classList.add('smaller');bb.classList.add('bigger');}else{ba.classList.add('equal-win');bb.classList.add('equal-win');}const oks=['¡Correcto! 🎉','¡Muy bien! 🌟','¡Excelente! 🏆'];const errs=[`¡Casi! El correcto es "${correct}" 💪`,`Es "${correct}" 🔍`];document.getElementById('p2-fba').innerHTML=`<div class="feedback ${ok?'ok':'err'}">${ok?oks[Math.floor(Math.random()*oks.length)]:errs[Math.floor(Math.random()*errs.length)]}</div>`;const nb=document.getElementById('p2-nbtn');nb.style.display='block';nb.textContent=P2.round<P2.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';}
+function p2Next(){if(P2.round>=P2.ROUNDS){p2Result();return;}P2.round++;p2Render();}
+function p2Result(){document.getElementById('p2-pfill').style.width='100%';const pct=P2.score/P2.ROUNDS,s=pct>=.9?3:pct>=.6?2:1;const e=['😊','😄','🥳'],m=['¡Sigue practicando!','¡Muy bien!','¡CAMPEÓN comparando!'];document.getElementById('p2-content').innerHTML=`<div class="result-screen"><div class="result-emoji">${e[s-1]}</div><div class="result-stars">${[0,1,2].map(i=>starSVG(i<s)).join('')}</div><div class="result-num" style="color:#0F6E56">${P2.score}/${P2.ROUNDS}</div><div class="result-label" style="color:#1D9E75">${m[s-1]}</div><button class="action-btn" style="margin-bottom:10px" onclick="p2Restart()">🔄 Nuevos números</button><button class="ghost-btn" onclick="switchTab(3)">Ir a Parte 3 ➡️</button></div>`;}
+function p2Restart(){P2.round=1;P2.score=0;P2.pairs=p2GenPairs();p2Render();}
+
+/* ══ P3 ══ */
+const P3={ROUNDS:6,round:1,score:0,sets:[]};
+let p3State={slots:[],pool:[],sel:null}; // sel: {val, from:'pool'|'slot', idx}
+
+function p3GenSets(){const pools=[[1870,1260,1290,2670],[3450,3540,3000,3590],[5120,5210,5190,5020],[8000,8100,8010,8900],[4300,4030,3040,3400],[6210,6120,2610,2160],[7500,7050,5700,5070],[9000,9100,9010,8900],[1430,1340,3140,3410],[6780,6870,7680,7860],[2220,2120,2210,1220],[9990,9900,9090,9000]];return pools.sort(()=>Math.random()-.5).slice(0,6).map((nums,i)=>({nums:[...nums].sort(()=>Math.random()-.5),dir:i<3?'asc':'desc'}));}
+
+function p3Render(){
+  const ex=P3.sets[P3.round-1];
+  p3State={slots:Array(ex.nums.length).fill(null),pool:[...ex.nums],sel:null};
+  document.getElementById('p3-rinfo').textContent=`Ejercicio ${P3.round} de ${P3.ROUNDS}`;
+  document.getElementById('p3-pfill').style.width=`${(P3.round/P3.ROUNDS)*100}%`;
+  document.getElementById('p3-score').textContent=`⭐ ${P3.score} puntos`;
+  const isAsc=ex.dir==='asc';
+  document.getElementById('p3-content').innerHTML=`
+    <div class="p3-exercise">
+      <div class="dir-badge ${isAsc?'asc':'desc'}">${isAsc?'⬆️ De menor a mayor':'⬇️ De mayor a menor'}</div>
+      <div style="font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:10px">Toca un número y luego toca el lugar donde va:</div>
+      <div id="p3-pool" style="display:flex;flex-wrap:wrap;gap:8px;min-height:52px;margin-bottom:1rem;padding:8px;background:var(--color-background-primary);border-radius:var(--border-radius-md);border:2px dashed var(--color-border-secondary)"></div>
+      <div id="p3-slots" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+    <div id="p3-fba"></div>
+    <button class="action-btn" id="p3-abtn" onclick="p3Check()">Comprobar ✅</button>`;
+  p3Draw();
+}
+
+function p3Draw(){
+  const ex=P3.sets[P3.round-1];
+  const isAsc=ex.dir==='asc';
+  const arrow=isAsc?'⬆️':'⬇️';
+
+  // Pool
+  const poolEl=document.getElementById('p3-pool');
+  poolEl.innerHTML=p3State.pool.length===0
+    ?'<span style="font-size:13px;color:var(--color-text-secondary);padding:6px">¡Todos colocados!</span>'
+    :p3State.pool.map(v=>{
+      const isSel=p3State.sel&&p3State.sel.from==='pool'&&p3State.sel.val===v;
+      return`<div onclick="p3Tap('pool',null,${v})" style="padding:10px 16px;font-size:22px;font-weight:500;border-radius:var(--border-radius-md);border:2px solid ${isSel?'#D85A30':'var(--color-border-secondary)'};background:${isSel?'#FAECE7':'var(--color-background-secondary)'};color:${isSel?'#993C1D':'var(--color-text-primary)'};cursor:pointer;transform:${isSel?'scale(1.08)':'scale(1)'};transition:all .15s">${v}</div>`;
+    }).join('');
+
+  // Slots
+  const slotsEl=document.getElementById('p3-slots');
+  slotsEl.innerHTML=p3State.slots.map((val,i)=>{
+    const isSel=p3State.sel&&p3State.sel.from==='slot'&&p3State.sel.idx===i;
+    const filled=val!==null;
+    return`<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:24px;text-align:right;font-size:14px;color:var(--color-text-secondary);font-weight:500">${i+1}°</div>
+      <div onclick="p3Tap('slot',${i},${val})" style="width:120px;height:54px;display:flex;align-items:center;justify-content:center;font-size:${filled?'26':'20'}px;font-weight:500;border-radius:var(--border-radius-md);border:2px ${isSel?'solid #D85A30':filled?'solid var(--color-border-secondary)':'dashed var(--color-border-secondary)'};background:${isSel?'#FAECE7':filled?'var(--color-background-secondary)':'transparent'};color:${isSel?'#993C1D':'var(--color-text-primary)'};cursor:pointer;transition:all .15s">${filled?val:'—'}</div>
+      <div style="font-size:18px;color:var(--color-text-secondary)">${arrow}</div>
+    </div>`;
+  }).join('');
+}
+
+function p3Tap(from, idx, val){
+  const s=p3State;
+  // Nothing selected yet → select this
+  if(!s.sel){
+    if(from==='pool'&&val!==null){s.sel={from:'pool',val};p3Draw();return;}
+    if(from==='slot'&&val!==null){s.sel={from:'slot',idx,val};p3Draw();return;}
+    return;
+  }
+  // Already selected — placing
+  const prev=s.sel; s.sel=null;
+  if(from==='pool'){
+    // Tapped same pool chip → deselect
+    if(prev.from==='pool'&&prev.val===val){p3Draw();return;}
+    // Tapped different pool chip → switch selection
+    s.sel={from:'pool',val};p3Draw();return;
+  }
+  // Tapped a slot
+  if(from==='slot'){
+    if(prev.from==='pool'){
+      // Place pool chip in slot; if slot occupied send it back to pool
+      if(s.slots[idx]!==null) s.pool.push(s.slots[idx]);
+      s.slots[idx]=prev.val;
+      s.pool=s.pool.filter(v=>v!==prev.val);
+    } else {
+      // Swap two slots or put back in pool
+      if(prev.idx===idx){p3Draw();return;} // same slot → deselect
+      const tmp=s.slots[idx];
+      s.slots[idx]=prev.val;
+      s.slots[prev.idx]=tmp;
+    }
+    p3Draw();
+  }
+}
+
+function p3Check(){
+  const ex=P3.sets[P3.round-1];
+  if(p3State.pool.length>0){
+    document.getElementById('p3-fba').innerHTML=`<div class="feedback err" style="margin-bottom:1rem">¡Faltan números por colocar! 😊</div>`;
+    return;
+  }
+  const sorted=[...ex.nums].sort((a,b)=>ex.dir==='asc'?a-b:b-a);
+  const allOk=p3State.slots.every((v,i)=>v===sorted[i]);
+  if(allOk)P3.score++;
+  document.getElementById('p3-score').textContent=`⭐ ${P3.score} puntos`;
+
+  // Redraw slots with colors
+  const isAsc=ex.dir==='asc',arrow=isAsc?'⬆️':'⬇️';
+  document.getElementById('p3-slots').innerHTML=p3State.slots.map((val,i)=>{
+    const ok=val===sorted[i];
+    return`<div style="display:flex;align-items:center;gap:10px">
+      <div style="width:24px;text-align:right;font-size:14px;color:var(--color-text-secondary);font-weight:500">${i+1}°</div>
+      <div style="width:120px;height:54px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:500;border-radius:var(--border-radius-md);border:2px solid ${ok?'#1D9E75':'#E24B4A'};background:${ok?'#E1F5EE':'#FCEBEB'};color:${ok?'#0F6E56':'#A32D2D'}">${ok?val:sorted[i]}</div>
+      <div style="font-size:20px">${ok?'✅':'❌'}</div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('p3-fba').innerHTML=`<div class="feedback ${allOk?'ok':'err'}" style="margin-bottom:1rem">${allOk?'¡Perfecto! ¡Ordenaste todos bien! 🎉':'¡Casi! Los rojos muestran el orden correcto 😊'}</div>`;
+  const btn=document.getElementById('p3-abtn');btn.textContent=P3.round<P3.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';btn.onclick=p3Next;
+}
+function p3Next(){if(P3.round>=P3.ROUNDS){p3Result();return;}P3.round++;p3Render();}
+function p3Result(){document.getElementById('p3-pfill').style.width='100%';const pct=P3.score/P3.ROUNDS,s=pct>=.9?3:pct>=.6?2:1;const e=['😊','😄','🥳'],m=['¡Sigue practicando!','¡Muy bien!','¡INCREÍBLE! ¡Maestro ordenando!'];document.getElementById('p3-content').innerHTML=`<div class="result-screen"><div class="result-emoji">${e[s-1]}</div><div class="result-stars">${[0,1,2].map(i=>starSVG(i<s)).join('')}</div><div class="result-num" style="color:#993C1D">${P3.score}/${P3.ROUNDS}</div><div class="result-label" style="color:#D85A30">${m[s-1]}</div><button class="action-btn" style="margin-bottom:10px" onclick="p3Restart()">🔄 Nuevos números</button><button class="ghost-btn" onclick="switchTab(4)">Ir a Parte 4 ➡️</button></div>`;}
+function p3Restart(){P3.round=1;P3.score=0;P3.sets=p3GenSets();p3Render();}
+
+/* ══ P4 ══ */
+const P4={ROUNDS:12,round:1,score:0,items:[]};
+const P4_NUMS=[105,210,312,400,523,631,745,808,999,150,275,360,419,500,687,702,850,930,111,222,333,444,555,666,777,888,100,200,300,600,143,256,378,492,517,624,1000,1050,1100,1500,2000,2345,3000,3500,4000,4200,5000,5678,6000,7000,7500,8000,9000,9999,1001,1234,2002,3456,4500,6100,8080,1800,5050,2700];
+function p4GenItems(){return[...P4_NUMS].sort(()=>Math.random()-.5).slice(0,P4.ROUNDS).map(n=>({n,w:numToWords(n)}));}
+function p4Render(){const item=P4.items[P4.round-1];document.getElementById('p4-rinfo').textContent=`Pregunta ${P4.round} de ${P4.ROUNDS}`;document.getElementById('p4-pfill').style.width=`${(P4.round/P4.ROUNDS)*100}%`;document.getElementById('p4-score').textContent=`⭐ ${P4.score} puntos`;document.getElementById('p4-content').innerHTML=`<div class="num-card"><div style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.8rem;color:#534AB7">📝 ¿Cómo se escribe en número?</div><div style="font-size:26px;font-weight:500;color:#3C3489;line-height:1.4">${item.w}</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:1.1rem"><input id="p4-inp" type="text" inputmode="numeric" maxlength="4" class="p4-input-big" placeholder="____" oninput="p4Cap(this)" onkeydown="p4Key(event)"><div id="p4-hint" style="font-size:13px;color:var(--color-text-secondary);min-height:18px"></div></div><div id="p4-fba"></div><button class="action-btn" id="p4-abtn" onclick="p4Check()">Comprobar ✅</button>`;setTimeout(()=>{const e=document.getElementById('p4-inp');if(e)e.focus();},80);}
+function p4Cap(inp){inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,4);}
+function p4Key(e){if(e.key==='Enter'){const b=document.getElementById('p4-abtn');b&&b.onclick();}}
+function p4Check(){const item=P4.items[P4.round-1];const val=parseInt(document.getElementById('p4-inp').value.replace(/\D/g,''),10);const ok=val===item.n;if(ok)P4.score++;document.getElementById('p4-score').textContent=`⭐ ${P4.score} puntos`;const inp=document.getElementById('p4-inp');inp.disabled=true;inp.style.borderColor=ok?'#1D9E75':'#E24B4A';inp.style.background=ok?'#E1F5EE':'#FCEBEB';inp.style.color=ok?'#0F6E56':'#A32D2D';if(!ok){inp.value=item.n;document.getElementById('p4-hint').innerHTML=`<span style="color:#A32D2D;font-size:13px">Escribiste ${isNaN(val)?'nada':val} — era <strong>${item.n}</strong></span>`;}const oks=['¡Correcto! 🎉','¡Lo leíste perfecto! 🌟','¡Excelente! 🏆'];const errs=[`El número es ${item.n} 😊`,`¡Casi! Era el ${item.n} 💪`];document.getElementById('p4-fba').innerHTML=`<div class="feedback ${ok?'ok':'err'}">${ok?oks[Math.floor(Math.random()*oks.length)]:errs[Math.floor(Math.random()*errs.length)]}</div>`;const btn=document.getElementById('p4-abtn');btn.textContent=P4.round<P4.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';btn.style.marginTop='4px';btn.onclick=p4Next;}
+function p4Next(){if(P4.round>=P4.ROUNDS){p4Result();return;}P4.round++;p4Render();}
+function p4Result(){document.getElementById('p4-pfill').style.width='100%';const pct=P4.score/P4.ROUNDS,s=pct>=.9?3:pct>=.6?2:1;const e=['😊','😄','🥳'],m=['¡Sigue leyendo!','¡Muy bien!','¡SUPER ESTRELLA!'];document.getElementById('p4-content').innerHTML=`<div class="result-screen"><div class="result-emoji">${e[s-1]}</div><div class="result-stars">${[0,1,2].map(i=>starSVG(i<s)).join('')}</div><div class="result-num" style="color:#3C3489">${P4.score}/${P4.ROUNDS}</div><div class="result-label" style="color:#7F77DD">${m[s-1]}</div><button class="action-btn" style="margin-bottom:10px" onclick="p4Restart()">🔄 Nuevas palabras</button><button class="ghost-btn" onclick="switchTab(5)">Ir a Parte 5 ➡️</button></div>`;}
+function p4Restart(){P4.round=1;P4.score=0;P4.items=p4GenItems();p4Render();}
+
+/* ══ P5 ══ */
+const P5={ROUNDS:12,round:1,score:0,items:[]};
+const P5_NUMS=[105,210,312,400,523,631,745,808,999,150,275,360,500,687,702,850,930,111,222,444,555,777,888,100,200,300,600,143,256,378,492,517,624,1000,1500,2000,2345,3000,4000,5000,6000,7000,8000,9000,9999,1050,1234,2500,3456,4500,5678,6100,7500,8080,9100];
+function p5GenItems(){return[...P5_NUMS].sort(()=>Math.random()-.5).slice(0,P5.ROUNDS).map(n=>({n,w:numToWords(n)}));}
+function p5Render(){const item=P5.items[P5.round-1];document.getElementById('p5-rinfo').textContent=`Pregunta ${P5.round} de ${P5.ROUNDS}`;document.getElementById('p5-pfill').style.width=`${(P5.round/P5.ROUNDS)*100}%`;document.getElementById('p5-score').textContent=`⭐ ${P5.score} puntos`;document.getElementById('p5-content').innerHTML=`<div class="num-card"><div class="big-num">${item.n}</div><div class="card-sub">✍️ Escribe este número con letras</div></div><div style="margin-bottom:1rem"><textarea class="p5-textarea" id="p5-inp" placeholder="Escribe el número con palabras aquí..." rows="5" onkeydown="p5Key(event)"></textarea><div id="p5-hint" style="font-size:13px;color:var(--color-text-secondary);margin-top:6px;min-height:18px"></div></div><div id="p5-fba"></div><button class="action-btn" id="p5-abtn" onclick="p5Check()">Comprobar ✅</button>`;setTimeout(()=>{const e=document.getElementById('p5-inp');if(e)e.focus();},80);}
+function p5Key(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();const b=document.getElementById('p5-abtn');b&&b.onclick();}}
+function p5Check(){const item=P5.items[P5.round-1];const given=normalize(document.getElementById('p5-inp').value);const correct=normalize(item.w);const ok=given===correct;if(ok)P5.score++;document.getElementById('p5-score').textContent=`⭐ ${P5.score} puntos`;const ta=document.getElementById('p5-inp');ta.disabled=true;ta.classList.add(ok?'ok':'err');let extra='';if(!ok)extra=`<div class="p5-answer-reveal">✏️ La respuesta correcta es:<br><strong>${item.w}</strong></div>`;const oks=['¡Correcto! 🎉','¡Muy bien! 🌟','¡Excelente! 🏆'];const errs=['¡Casi! Mira bien cómo se escribe 😊','¡No te rindas! 💪'];document.getElementById('p5-fba').innerHTML=`<div class="feedback ${ok?'ok':'err'}">${ok?oks[Math.floor(Math.random()*oks.length)]:errs[Math.floor(Math.random()*errs.length)]}</div>${extra}`;const btn=document.getElementById('p5-abtn');btn.style.marginTop='8px';btn.textContent=P5.round<P5.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';btn.onclick=p5Next;}
+function p5Next(){if(P5.round>=P5.ROUNDS){p5Result();return;}P5.round++;p5Render();}
+function p5Result(){document.getElementById('p5-pfill').style.width='100%';const pct=P5.score/P5.ROUNDS,s=pct>=.9?3:pct>=.6?2:1;const e=['😊','😄','🥳'],m=['¡Sigue practicando!','¡Muy bien!','¡SUPER ESTRELLA!'];document.getElementById('p5-content').innerHTML=`<div class="result-screen"><div class="result-emoji">${e[s-1]}</div><div class="result-stars">${[0,1,2].map(i=>starSVG(i<s)).join('')}</div><div class="result-num" style="color:#633806">${P5.score}/${P5.ROUNDS}</div><div class="result-label" style="color:#BA7517">${m[s-1]}</div><button class="action-btn" style="margin-bottom:10px" onclick="p5Restart()">🔄 Nuevos números</button><button class="ghost-btn" onclick="switchTab(6)">Ir a Parte 6 ➡️</button></div>`;}
+function p5Restart(){P5.round=1;P5.score=0;P5.items=p5GenItems();p5Render();}
+
+/* ══ P6 ══ */
+const P6={ROUNDS:10,round:1,score:0,nums:[]};
+function p6GenNums(){const pool=[];for(let i=0;i<5;i++)pool.push(1000*(Math.floor(Math.random()*4)+1)+100*Math.floor(Math.random()*10)+10*Math.floor(Math.random()*10)+Math.floor(Math.random()*10));for(let i=0;i<3;i++)pool.push(100*(Math.floor(Math.random()*9)+1)+10*Math.floor(Math.random()*10)+Math.floor(Math.random()*10));pool.push(100*(Math.floor(Math.random()*9)+1)+10*(Math.floor(Math.random()*9)+1));pool.push([1050,2300,3012,1500,2080,3200,1910,2430,1567,3009][Math.floor(Math.random()*10)]);return pool.sort(()=>Math.random()-.5).slice(0,P6.ROUNDS);}
+function p6MakeBlocks(count,cls){let h='';for(let i=0;i<count;i++)h+=`<div class="${cls}"></div>`;return h;}
+function p6Render(){const n=P6.nums[P6.round-1];const{m,h,d,u}=mhdu(n);document.getElementById('p6-rinfo').textContent=`Pregunta ${P6.round} de ${P6.ROUNDS}`;document.getElementById('p6-pfill').style.width=`${(P6.round/P6.ROUNDS)*100}%`;document.getElementById('p6-score').textContent=`⭐ ${P6.score} puntos`;const none='<span style="font-size:11px;color:var(--color-text-secondary)">ninguna</span>';const mB=m>0?p6MakeBlocks(m,'fb-m'):none;const cB=h>0?p6MakeBlocks(h,'fb-h'):none;const dB=d>0?p6MakeBlocks(d,'fb-d'):none;const uB=u>0?p6MakeBlocks(u,'fb-u'):none;document.getElementById('p6-content').innerHTML=`<div style="text-align:center;font-size:15px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.9rem">🔷 Mira las figuras y escribe el número</div><div class="fig-groups"><div class="fig-group fg-m"><div class="fig-group-label">🟣 Miles</div><div class="fig-blocks">${mB}</div></div><div class="fig-group fg-c"><div class="fig-group-label">🔵 Centenas</div><div class="fig-blocks">${cB}</div></div><div class="fig-group fg-d"><div class="fig-group-label">🟢 Decenas</div><div class="fig-blocks">${dB}</div></div><div class="fig-group fg-u"><div class="fig-group-label">🟠 Unidades</div><div class="fig-blocks">${uB}</div></div></div><div style="margin-bottom:1.1rem;text-align:center"><div style="font-size:13px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.7rem">¿Qué número forman las figuras?</div><input class="p6-input" type="text" inputmode="numeric" maxlength="4" id="p6-inp" placeholder="____" oninput="p6Cap(this)" onkeydown="p6Key(event)"></div><div id="p6-fba"></div><button class="action-btn" id="p6-abtn" onclick="p6Check()">Comprobar ✅</button>`;setTimeout(()=>{const e=document.getElementById('p6-inp');if(e)e.focus();},80);}
+function p6Cap(inp){inp.value=inp.value.replace(/\D/g,'').slice(0,4);}
+function p6Key(e){if(e.key==='Enter'){const b=document.getElementById('p6-abtn');b&&b.onclick();}}
+function p6Check(){const n=P6.nums[P6.round-1],val=parseInt(document.getElementById('p6-inp').value.replace(/\D/g,''),10),ok=val===n;if(ok)P6.score++;document.getElementById('p6-score').textContent=`⭐ ${P6.score} puntos`;const inp=document.getElementById('p6-inp');inp.disabled=true;inp.classList.add(ok?'ok':'err');if(!ok)inp.value=n;const oks=['¡Correcto! 🎉','¡Muy bien! 🌟','¡Excelente! 🏆'];const errs=[`¡Casi! Era el ${n} 😊`,`¡No te rindas! Era el ${n} 💪`];document.getElementById('p6-fba').innerHTML=`<div class="feedback ${ok?'ok':'err'}">${ok?oks[Math.floor(Math.random()*oks.length)]:errs[Math.floor(Math.random()*errs.length)]}</div>`;const btn=document.getElementById('p6-abtn');btn.textContent=P6.round<P6.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';btn.onclick=p6Next;}
+function p6Next(){if(P6.round>=P6.ROUNDS){p6Result();return;}P6.round++;p6Render();}
+function p6Result(){document.getElementById('p6-pfill').style.width='100%';const pct=P6.score/P6.ROUNDS,s=pct>=.9?3:pct>=.6?2:1;const e=['😊','😄','🥳'],m=['¡Sigue practicando!','¡Muy bien!','¡CAMPEÓN leyendo figuras!'];document.getElementById('p6-content').innerHTML=`<div class="result-screen"><div class="result-emoji">${e[s-1]}</div><div class="result-stars">${[0,1,2].map(i=>starSVG(i<s)).join('')}</div><div class="result-num" style="color:#085041">${P6.score}/${P6.ROUNDS}</div><div class="result-label" style="color:#0F6E56">${m[s-1]}</div><button class="action-btn" style="margin-bottom:10px" onclick="p6Restart()">🔄 Nuevas figuras</button><button class="ghost-btn" onclick="switchTab(7)">Ir a Parte 7 ➡️</button></div>`;}
+function p6Restart(){P6.round=1;P6.score=0;P6.nums=p6GenNums();p6Render();}
+
+/* ══ P7 — Posición y valor ══ */
+const P7={ROUNDS:12,round:1,score:0,items:[],sel:null};
+const POS_NAMES=['U','D','C','UM']; // index = position (0=units,1=tens,2=hundreds,3=thousands)
+const POS_VALUES=[1,10,100,1000];
+const POS_COLORS=['c-u','c-d','c-c','c-m'];
+const POS_LABELS=['Unidades','Decenas','Centenas','Miles'];
+
+function p7GenItems(){
+  const nums=[];
+  // ensure mix of 3 and 4 digit numbers
+  for(let i=0;i<7;i++) nums.push(1000*(Math.floor(Math.random()*9)+1)+100*Math.floor(Math.random()*10)+10*Math.floor(Math.random()*10)+Math.floor(Math.random()*10));
+  for(let i=0;i<5;i++) nums.push(100*(Math.floor(Math.random()*9)+1)+10*Math.floor(Math.random()*10)+Math.floor(Math.random()*10));
+  return nums.sort(()=>Math.random()-.5).slice(0,P7.ROUNDS).map(n=>{
+    const{m,h,d,u}=mhdu(n);
+    const digits=[u,d,h,m]; // index 0=units, 1=tens, 2=hundreds, 3=thousands
+    // pick a digit that is not zero
+    const nonZero=digits.map((v,i)=>v>0?i:-1).filter(i=>i>=0);
+    const pos=nonZero[Math.floor(Math.random()*nonZero.length)];
+    const digit=digits[pos];
+    const value=digit*POS_VALUES[pos];
+    return{n,pos,digit,value};
+  });
+}
+
+function p7Render(){
+  const item=P7.items[P7.round-1];
+  P7.sel=null;
+  document.getElementById('p7-rinfo').textContent=`Pregunta ${P7.round} de ${P7.ROUNDS}`;
+  document.getElementById('p7-pfill').style.width=`${(P7.round/P7.ROUNDS)*100}%`;
+  document.getElementById('p7-score').textContent=`⭐ ${P7.score} puntos`;
+
+  // Build digit display
+  const str=String(item.n);
+  const len=str.length; // 3 or 4 digits
+  // positions: last digit = units (pos 0), second to last = tens (pos 1), etc.
+  const digitCells=str.split('').map((ch,i)=>{
+    const posIndex=(len-1-i); // 0=units for last, 3=thousands for first of 4-digit
+    const isHL=posIndex===item.pos;
+    return`<div class="p7-digit${isHL?' highlighted':''}">${ch}</div>`;
+  }).join('');
+
+  // Arrow row — arrow only under highlighted digit
+  const arrowCells=str.split('').map((_,i)=>{
+    const posIndex=(len-1-i);
+    return`<div class="p7-arrow-cell">${posIndex===item.pos?'⬆️':''}</div>`;
+  }).join('');
+
+  // Circles — show only positions that exist in the number
+  const{m}=mhdu(item.n);
+  const showPositions=m>0?[3,2,1,0]:[2,1,0]; // 3-digit: no UM circle
+  const circles=showPositions.map(pi=>`
+    <button class="p7-circle ${POS_COLORS[pi]}" id="p7-c${pi}" onclick="p7SelectPos(${pi})">${POS_NAMES[pi]}</button>
+  `).join('');
+
+  document.getElementById('p7-content').innerHTML=`
+    <div style="text-align:center;font-size:14px;font-weight:500;color:var(--color-text-secondary);margin-bottom:.8rem">
+      🎯 ¿Qué posición tiene la flecha? ¿Cuánto vale ese dígito?
+    </div>
+    <div class="p7-number-display">${digitCells}</div>
+    <div class="p7-arrow-row">${arrowCells}</div>
+    <div style="font-size:13px;font-weight:500;color:var(--color-text-secondary);text-align:center;margin-bottom:.6rem">Toca la posición correcta:</div>
+    <div class="p7-circles">${circles}</div>
+    <div class="p7-val-row">
+      <div class="p7-val-label">¿Cuánto vale ese dígito?</div>
+      <input class="p7-val-input" type="text" inputmode="numeric" maxlength="5" id="p7-val" placeholder="____" oninput="p7CapVal(this)" onkeydown="p7Key(event)">
+    </div>
+    <div id="p7-fba"></div>
+    <button class="action-btn" id="p7-abtn" onclick="p7Check()">Comprobar ✅</button>`;
+}
+
+function p7SelectPos(pi){
+  if(document.getElementById('p7-abtn').disabled) return;
+  P7.sel=pi;
+  [0,1,2,3].forEach(i=>{const c=document.getElementById('p7-c'+i);if(c)c.classList.toggle('selected',i===pi);});
+}
+function p7CapVal(inp){inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,5);}
+function p7Key(e){if(e.key==='Enter'){const b=document.getElementById('p7-abtn');b&&b.onclick();}}
+
+function p7Check(){
+  const item=P7.items[P7.round-1];
+  const posOk=P7.sel===item.pos;
+  const val=parseInt(document.getElementById('p7-val').value.replace(/\D/g,''),10);
+  const valOk=val===item.value;
+  const ok=posOk&&valOk;
+  if(ok)P7.score++;
+  document.getElementById('p7-score').textContent=`⭐ ${P7.score} puntos`;
+
+  // Show circle result
+  [0,1,2,3].forEach(i=>{
+    const c=document.getElementById('p7-c'+i);
+    if(!c)return;
+    c.disabled=true;
+    if(i===item.pos) c.classList.add('correct');
+    else if(i===P7.sel&&!posOk) c.classList.add('wrong');
+  });
+
+  // Show value input result
+  const vi=document.getElementById('p7-val');
+  vi.disabled=true;
+  vi.classList.add(valOk?'ok':'err');
+  if(!valOk) vi.value=item.value;
+
+  // Feedback
+  let msg='';
+  if(ok){
+    const oks=['¡Perfecto! ¡Acertaste posición y valor! 🎉','¡Excelente! ¡Lo entendiste genial! 🌟','¡CAMPEÓN! ¡Eso es! 🏆'];
+    msg=oks[Math.floor(Math.random()*oks.length)];
+  } else {
+    const pName=POS_LABELS[item.pos];
+    msg=`La posición es <strong>${POS_NAMES[item.pos]} (${pName})</strong> y su valor es <strong>${item.value}</strong> 😊`;
+    if(posOk&&!valOk) msg=`¡La posición era correcta! Pero el valor es <strong>${item.value}</strong> 💪`;
+    if(!posOk&&valOk) msg=`¡El valor era correcto! Pero la posición es <strong>${POS_NAMES[item.pos]} (${pName})</strong> 💪`;
+  }
+  document.getElementById('p7-fba').innerHTML=`<div class="feedback ${ok?'ok':'err'}">${msg}</div>`;
+
+  document.getElementById('p7-abtn').disabled=true;
+  const nb=document.createElement('button');
+  nb.className='action-btn';nb.style.marginTop='8px';
+  nb.textContent=P7.round<P7.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';
+  nb.onclick=p7Next;
+  document.getElementById('p7-content').appendChild(nb);
+}
+
+function p7Next(){if(P7.round>=P7.ROUNDS){p7Result();return;}P7.round++;p7Render();}
+function p7Result(){
+  document.getElementById('p7-pfill').style.width='100%';
+  const pct=P7.score/P7.ROUNDS,s=pct>=.9?3:pct>=.6?2:1;
+  const e=['😊','😄','🥳'],m=['¡Sigue practicando posiciones!','¡Muy bien! Casi los aciertas todos.','¡MAESTRO de las posiciones y valores!'];
+  document.getElementById('p7-content').innerHTML=`<div class="result-screen"><div class="result-emoji">${e[s-1]}</div><div class="result-stars">${[0,1,2].map(i=>starSVG(i<s)).join('')}</div><div class="result-num" style="color:#993C1D">${P7.score}/${P7.ROUNDS}</div><div class="result-label" style="color:#D85A30">${m[s-1]}</div><button class="action-btn" style="margin-bottom:10px" onclick="p7Restart()">🔄 Nuevos ejercicios</button><button class="ghost-btn" onclick="switchTab(1)">⬅️ Volver al inicio</button></div>`;
+}
+function p7Restart(){P7.round=1;P7.score=0;P7.sel=null;P7.items=p7GenItems();p7Render();}
+
+/* ── INIT ── */
+[1,2,3,4,5,6,7].forEach(i=>{const p=document.getElementById('panel'+i);if(p)p.style.display='none';});
+renderMenu(1);
+switchTab(1);
+P1.nums=p1GenNums();p1Render();
+P2.pairs=p2GenPairs();p2Render();
+P3.sets=p3GenSets();p3Render();
+P4.items=p4GenItems();p4Render();
+P5.items=p5GenItems();p5Render();
+P6.nums=p6GenNums();p6Render();
+P7.items=p7GenItems();p7Render();
+</script>
+</body></html>
