@@ -427,8 +427,13 @@ function p3Restart(){P3.round=1;P3.score=0;P3.sets=p3GenSets();p3Render();}
 
 /* ══ P4 ══ */
 const P4={ROUNDS:12,round:1,score:0,items:[]};
-const P4_NUMS=[105,210,312,400,523,631,745,808,999,150,275,360,419,500,687,702,850,930,111,222,333,444,555,666,777,888,100,200,300,600,143,256,378,492,517,624,1000,1050,1100,1500,2000,2345,3000,3500,4000,4200,5000,5678,6000,7000,7500,8000,9000,9999,1001,1234,2002,3456,4500,6100,8080,1800,5050,2700];
-function p4GenItems(){return[...P4_NUMS].sort(()=>Math.random()-.5).slice(0,P4.ROUNDS).map(n=>({n,w:numToWords(n)}));}
+const P4_CIENTOS=[105,210,312,400,523,631,745,808,999,150,275,360,419,500,687,702,850,930,111,333,444,666,777,888,100,200,300,600,143,256,378,492,517,624];
+const P4_MILES=[1000,1050,1100,1500,2000,2345,3000,3500,4000,4200,5000,5678,6000,7000,7500,8000,9000,9999,1001,1234,2002,3456,4500,6100,8080,1800,5050,2700,1300,4321,6789,8500];
+function p4GenItems(){
+  const c=[...P4_CIENTOS].sort(()=>Math.random()-.5).slice(0,5);
+  const m=[...P4_MILES].sort(()=>Math.random()-.5).slice(0,7);
+  return [...c,...m].sort(()=>Math.random()-.5).map(n=>({n,w:numToWords(n)}));
+}
 function p4Render(){const item=P4.items[P4.round-1];document.getElementById('p4-rinfo').textContent=`Pregunta ${P4.round} de ${P4.ROUNDS}`;document.getElementById('p4-pfill').style.width=`${(P4.round/P4.ROUNDS)*100}%`;document.getElementById('p4-score').textContent=`⭐ ${P4.score} puntos`;document.getElementById('p4-content').innerHTML=`<div class="num-card"><div style="font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.8rem;color:#534AB7">📝 ¿Cómo se escribe en número?</div><div style="font-size:26px;font-weight:500;color:#3C3489;line-height:1.4">${item.w}</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;margin-bottom:1.1rem">      <input id="p4-inp" type="text" inputmode="numeric" maxlength="4" class="p4-input-big" placeholder="____" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" oninput="p4Cap(this)" onkeydown="p4Key(event)"><div id="p4-hint" style="font-size:13px;color:var(--color-text-secondary);min-height:18px"></div></div><div id="p4-fba"></div><button class="action-btn" id="p4-abtn" onclick="p4Check()">Comprobar ✅</button>`;setTimeout(()=>{const e=document.getElementById('p4-inp');if(e)e.focus();},80);}
 function p4Cap(inp){inp.value=inp.value.replace(/[^0-9]/g,'').slice(0,4);}
 function p4Key(e){if(e.key==='Enter'){const b=document.getElementById('p4-abtn');b&&b.onclick();}}
@@ -439,8 +444,13 @@ function p4Restart(){P4.round=1;P4.score=0;P4.items=p4GenItems();p4Render();}
 
 /* ══ P5 ══ */
 const P5={ROUNDS:12,round:1,score:0,items:[]};
-const P5_NUMS=[105,210,312,400,523,631,745,808,999,150,275,360,500,687,702,850,930,111,222,444,555,777,888,100,200,300,600,143,256,378,492,517,624,1000,1500,2000,2345,3000,4000,5000,6000,7000,8000,9000,9999,1050,1234,2500,3456,4500,5678,6100,7500,8080,9100];
-function p5GenItems(){return[...P5_NUMS].sort(()=>Math.random()-.5).slice(0,P5.ROUNDS).map(n=>({n,w:numToWords(n)}));}
+const P5_CIENTOS=[105,210,312,400,523,631,745,808,999,150,275,360,500,687,702,850,930,111,444,555,777,888,100,200,300,600,143,256,378,492,517,624];
+const P5_MILES=[1000,1500,2000,2345,3000,4000,5000,6000,7000,8000,9000,9999,1050,1234,2500,3456,4500,5678,6100,7500,8080,9100,1800,3200,4321,7654];
+function p5GenItems(){
+  const c=[...P5_CIENTOS].sort(()=>Math.random()-.5).slice(0,5);
+  const m=[...P5_MILES].sort(()=>Math.random()-.5).slice(0,7);
+  return [...c,...m].sort(()=>Math.random()-.5).map(n=>({n,w:numToWords(n)}));
+}
 function p5Render(){const item=P5.items[P5.round-1];document.getElementById('p5-rinfo').textContent=`Pregunta ${P5.round} de ${P5.ROUNDS}`;document.getElementById('p5-pfill').style.width=`${(P5.round/P5.ROUNDS)*100}%`;document.getElementById('p5-score').textContent=`⭐ ${P5.score} puntos`;document.getElementById('p5-content').innerHTML=`<div class="num-card"><div class="big-num">${item.n}</div><div class="card-sub">✍️ Escribe este número con letras</div></div><div style="margin-bottom:1rem"><textarea class="p5-textarea" id="p5-inp" placeholder="Escribe el número con palabras aquí..." rows="5" onkeydown="p5Key(event)"></textarea><div id="p5-hint" style="font-size:13px;color:var(--color-text-secondary);margin-top:6px;min-height:18px"></div></div><div id="p5-fba"></div><button class="action-btn" id="p5-abtn" onclick="p5Check()">Comprobar ✅</button>`;setTimeout(()=>{const e=document.getElementById('p5-inp');if(e)e.focus();},80);}
 function p5Key(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();const b=document.getElementById('p5-abtn');b&&b.onclick();}}
 function p5Check(){const item=P5.items[P5.round-1];const given=normalize(document.getElementById('p5-inp').value);const correct=normalize(item.w);const ok=given===correct;if(ok)P5.score++;document.getElementById('p5-score').textContent=`⭐ ${P5.score} puntos`;const ta=document.getElementById('p5-inp');ta.disabled=true;ta.classList.add(ok?'ok':'err');let extra='';if(!ok)extra=`<div class="p5-answer-reveal">✏️ La respuesta correcta es:<br><strong>${item.w}</strong></div>`;const oks=['¡Correcto! 🎉','¡Muy bien! 🌟','¡Excelente! 🏆'];const errs=['¡Casi! Mira bien cómo se escribe 😊','¡No te rindas! 💪'];document.getElementById('p5-fba').innerHTML=`<div class="feedback ${ok?'ok':'err'}">${ok?oks[Math.floor(Math.random()*oks.length)]:errs[Math.floor(Math.random()*errs.length)]}</div>${extra}`;const btn=document.getElementById('p5-abtn');btn.style.marginTop='8px';btn.textContent=P5.round<P5.ROUNDS?'Siguiente ➡️':'Ver resultado 🏆';btn.onclick=p5Next;}
